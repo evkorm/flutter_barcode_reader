@@ -9,6 +9,12 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import android.view.Menu
 import android.view.MenuItem
+import android.graphics.Color
+import android.view.View
+import android.view.Gravity
+import android.widget.TextView
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import com.google.zxing.Result
 import me.dm7.barcodescanner.zxing.ZXingScannerView
 
@@ -25,12 +31,33 @@ class BarcodeScannerActivity : Activity(), ZXingScannerView.ResultHandler {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val parent = RelativeLayout(this)
+        parent.layoutParams = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.MATCH_PARENT)
+        setContentView(parent)
+
         title = ""
+
         scannerView = ZXingScannerView(this)
         scannerView.setAutoFocus(true)
         // this paramter will make your HUAWEI phone works great!
         scannerView.setAspectTolerance(0.5f)
-        setContentView(scannerView)
+        parent.addView(scannerView)
+
+        val textMargin = 16
+        val textLayout = RelativeLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT)
+        textLayout.setMargins(textMargin, 3 * textMargin, textMargin, 0)
+
+        val text = TextView(this)
+        text.setBackgroundColor(Color.TRANSPARENT);
+        text.setTextColor(Color.WHITE);
+        text.setTextSize(20f)
+        text.setText(intent.getStringExtra("text") ?: "")
+        text.setGravity(Gravity.CENTER_HORIZONTAL or Gravity.CENTER_VERTICAL)
+        text.setLayoutParams(textLayout);
+        parent.addView(text)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

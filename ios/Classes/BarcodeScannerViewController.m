@@ -50,6 +50,18 @@
                                                                             action:@selector(cancel)];
     
     [self updateFlashButton];
+
+    const float textPadding = 16;
+    const float textHeight = 150;
+    CGRect textBounds = CGRectMake(textPadding, textPadding,
+                                   self.view.bounds.size.width-textPadding-textPadding, textHeight);
+    UILabel* textLabel = [[UILabel alloc] initWithFrame:textBounds];
+    textLabel.textColor = [UIColor whiteColor];
+    textLabel.lineBreakMode = NSLineBreakByWordWrapping;
+    textLabel.numberOfLines = 0;
+    textLabel.textAlignment = NSTextAlignmentCenter;
+    textLabel.text = self.text;
+    [self.view addSubview:textLabel];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
