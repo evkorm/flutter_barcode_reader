@@ -13,17 +13,19 @@
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
     if ([@"scan" isEqualToString:call.method]) {
         self.result = result;
-        [self showBarcodeView:call.arguments[@"text"]];
+        [self showBarcodeViewWithText:call.arguments[@"text"]
+                       useFrontCamera:[call.arguments[@"frontCamera"] boolValue]];
     } else {
         result(FlutterMethodNotImplemented);
     }
 }
 
-- (void)showBarcodeView:(NSString*)text {
+- (void)showBarcodeViewWithText:(NSString*)text useFrontCamera:(BOOL)useFrontCamera {
     BarcodeScannerViewController *scannerViewController = [[BarcodeScannerViewController alloc] init];
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:scannerViewController];
     scannerViewController.delegate = self;
     scannerViewController.text = text;
+    scannerViewController.useFrontCamera = useFrontCamera;
     [self.hostViewController presentViewController:navigationController animated:NO completion:nil];
 }
 

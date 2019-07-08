@@ -43,7 +43,7 @@
     [_scanRect startAnimating];
     
     self.scanner = [[MTBBarcodeScanner alloc] initWithPreviewView:_previewView];
-    
+
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"close"]
                                                                              style:UIBarButtonItemStylePlain
                                                                             target:self
@@ -89,7 +89,8 @@
 
 - (void)startScan {
     NSError *error;
-    [self.scanner startScanningWithResultBlock:^(NSArray<AVMetadataMachineReadableCodeObject *> *codes) {
+    [self.scanner startScanningWithCamera:self.useFrontCamera ? MTBCameraFront : MTBCameraBack
+                              resultBlock:^(NSArray<AVMetadataMachineReadableCodeObject *> *codes) {
         [self.scanner stopScanning];
         AVMetadataMachineReadableCodeObject *code = codes.firstObject;
         if (code) {

@@ -11,6 +11,7 @@
 
 @interface BarcodeScannerViewController : UIViewController
 @property(nonatomic, copy) NSString *text;
+@property(nonatomic) BOOL useFrontCamera;
 @property(nonatomic, retain) UIView *previewView;
   @property(nonatomic, retain) ScannerOverlay *scanRect;
 @property(nonatomic, retain) MTBBarcodeScanner *scanner;
