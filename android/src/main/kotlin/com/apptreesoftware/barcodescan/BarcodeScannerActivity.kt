@@ -16,6 +16,7 @@ import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import com.google.zxing.Result
 import me.dm7.barcodescanner.zxing.ZXingScannerView
+import android.R.id
 
 class BarcodeScannerActivity : Activity(), ZXingScannerView.ResultHandler {
     private lateinit var scannerView: ZXingScannerView
@@ -23,7 +24,6 @@ class BarcodeScannerActivity : Activity(), ZXingScannerView.ResultHandler {
     companion object {
         const val REQUEST_TAKE_PHOTO_CAMERA_PERMISSION = 100
         const val TOGGLE_FLASH = 200
-        const val CLOSE_ACTIVITY = 300
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,22 +55,20 @@ class BarcodeScannerActivity : Activity(), ZXingScannerView.ResultHandler {
         text.gravity = Gravity.CENTER_HORIZONTAL or Gravity.CENTER_VERTICAL
         text.layoutParams = textLayout
         parent.addView(text)
+
+        actionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        val item = menu.add(0,
-                CLOSE_ACTIVITY, 0, "Закрыть")
-        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-
-//        if (scannerView.flash) {
-//            val item = menu.add(0,
-//                    TOGGLE_FLASH, 0, "")
-//            item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-//        } else {
-//            val item = menu.add(0,
-//                    TOGGLE_FLASH, 0, "Flash On")
-//            item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-//        }
+        if (scannerView.flash) {
+            val item = menu.add(0,
+                    TOGGLE_FLASH, 0, "Flash Off")
+            item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+        } else {
+            val item = menu.add(0,
+                    TOGGLE_FLASH, 0, "Flash On")
+            item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+        }
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -80,7 +78,7 @@ class BarcodeScannerActivity : Activity(), ZXingScannerView.ResultHandler {
             this.invalidateOptionsMenu()
             return true
         }
-        if (item.itemId == CLOSE_ACTIVITY) {
+        if (item.itemId == id.home) {
             this.finishWithError("close pressed")
             return true
         }
