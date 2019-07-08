@@ -18,11 +18,13 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView
 import android.R.id
 import androidx.appcompat.app.AppCompatActivity
 import android.graphics.drawable.Drawable
+import android.hardware.Camera
 import java.io.IOException
 
 
 class BarcodeScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandler {
     private lateinit var scannerView: ZXingScannerView
+    private var cameraId = -1
 
     companion object {
         const val REQUEST_TAKE_PHOTO_CAMERA_PERMISSION = 100
@@ -58,6 +60,12 @@ class BarcodeScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandl
         text.gravity = Gravity.CENTER_HORIZONTAL or Gravity.CENTER_VERTICAL
         text.layoutParams = textLayout
         parent.addView(text)
+
+        val frontCamera = intent.getBooleanExtra("frontCamera", false)
+        cameraId = when(frontCamera) {
+            true -> getCameraId(Camera.CameraInfo.CAMERA_FACING_FRONT)
+            false -> getCameraId(Camera.CameraInfo.CAMERA_FACING_BACK)
+        }
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
@@ -101,7 +109,7 @@ class BarcodeScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandl
         scannerView.setResultHandler(this)
         // start camera immediately if permission is already given
         if (!requestCameraAccessIfNecessary()) {
-            scannerView.startCamera()
+            scannerView.startCamera(cameraId)
         }
     }
 
@@ -115,6 +123,20 @@ class BarcodeScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandl
         intent.putExtra("SCAN_RESULT", result.toString())
         setResult(RESULT_OK, intent)
         finish()
+    }
+
+    private fun getCameraId(facing: Int): Int {
+        val numberOfCameras = Camera.getNumberOfCameras()
+        val cameraInfo = Camera.CameraInfo()
+        var defaultCameraId = -1
+        for (i in 0 until numberOfCameras) {
+            defaultCameraId = i
+            Camera.getCameraInfo(i, cameraInfo)
+            if (cameraInfo.facing == facing) {
+                return i
+            }
+        }
+        return defaultCameraId
     }
 
     private fun finishWithError(errorCode: String) {

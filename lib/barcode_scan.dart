@@ -6,6 +6,12 @@ class BarcodeScanner {
   static const CameraAccessDenied = 'PERMISSION_NOT_GRANTED';
   static const MethodChannel _channel =
       const MethodChannel('com.apptreesoftware.barcode_scan');
-  static Future<String> scan({String text}) async =>
-      await _channel.invokeMethod('scan', {'text':text ?? ''});
+  static Future<String> scan({String text, bool frontCamera}) async =>
+      await _channel.invokeMethod(
+        'scan',
+        {
+          'text': text ?? '',
+          'frontCamera': frontCamera ?? false
+        },
+      );
 }
