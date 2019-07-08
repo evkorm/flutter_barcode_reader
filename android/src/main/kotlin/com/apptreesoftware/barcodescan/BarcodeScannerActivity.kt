@@ -10,7 +10,6 @@ import androidx.core.content.ContextCompat
 import android.view.Menu
 import android.view.MenuItem
 import android.graphics.Color
-import android.view.View
 import android.view.Gravity
 import android.widget.TextView
 import android.widget.LinearLayout
@@ -18,15 +17,13 @@ import android.widget.RelativeLayout
 import com.google.zxing.Result
 import me.dm7.barcodescanner.zxing.ZXingScannerView
 
-
 class BarcodeScannerActivity : Activity(), ZXingScannerView.ResultHandler {
-
-    lateinit var scannerView: me.dm7.barcodescanner.zxing.ZXingScannerView
+    private lateinit var scannerView: ZXingScannerView
 
     companion object {
-        val REQUEST_TAKE_PHOTO_CAMERA_PERMISSION = 100
-        val TOGGLE_FLASH = 200
-        val CLOSE_ACTIVITY = 300
+        const val REQUEST_TAKE_PHOTO_CAMERA_PERMISSION = 100
+        const val TOGGLE_FLASH = 200
+        const val CLOSE_ACTIVITY = 300
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,12 +48,12 @@ class BarcodeScannerActivity : Activity(), ZXingScannerView.ResultHandler {
         textLayout.setMargins(textMargin, 3 * textMargin, textMargin, 0)
 
         val text = TextView(this)
-        text.setBackgroundColor(Color.TRANSPARENT);
-        text.setTextColor(Color.WHITE);
-        text.setTextSize(20f)
-        text.setText(intent.getStringExtra("text") ?: "")
-        text.setGravity(Gravity.CENTER_HORIZONTAL or Gravity.CENTER_VERTICAL)
-        text.setLayoutParams(textLayout);
+        text.setBackgroundColor(Color.TRANSPARENT)
+        text.setTextColor(Color.WHITE)
+        text.textSize = 20f
+        text.text = intent.getStringExtra("text") ?: ""
+        text.gravity = Gravity.CENTER_HORIZONTAL or Gravity.CENTER_VERTICAL
+        text.layoutParams = textLayout
         parent.addView(text)
     }
 
@@ -107,14 +104,14 @@ class BarcodeScannerActivity : Activity(), ZXingScannerView.ResultHandler {
     override fun handleResult(result: Result?) {
         val intent = Intent()
         intent.putExtra("SCAN_RESULT", result.toString())
-        setResult(Activity.RESULT_OK, intent)
+        setResult(RESULT_OK, intent)
         finish()
     }
 
-    fun finishWithError(errorCode: String) {
+    private fun finishWithError(errorCode: String) {
         val intent = Intent()
         intent.putExtra("ERROR_CODE", errorCode)
-        setResult(Activity.RESULT_CANCELED, intent)
+        setResult(RESULT_CANCELED, intent)
         finish()
     }
 
@@ -156,7 +153,7 @@ object PermissionUtil {
      */
     fun verifyPermissions(grantResults: IntArray): Boolean {
         // At least one result must be checked.
-        if (grantResults.size < 1) {
+        if (grantResults.isEmpty()) {
             return false
         }
 
