@@ -1,7 +1,6 @@
 package com.apptreesoftware.barcodescan
 
 import android.Manifest
-import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -17,8 +16,12 @@ import android.widget.RelativeLayout
 import com.google.zxing.Result
 import me.dm7.barcodescanner.zxing.ZXingScannerView
 import android.R.id
+import androidx.appcompat.app.AppCompatActivity
+import android.graphics.drawable.Drawable
+import java.io.IOException
 
-class BarcodeScannerActivity : Activity(), ZXingScannerView.ResultHandler {
+
+class BarcodeScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandler {
     private lateinit var scannerView: ZXingScannerView
 
     companion object {
@@ -56,7 +59,7 @@ class BarcodeScannerActivity : Activity(), ZXingScannerView.ResultHandler {
         text.layoutParams = textLayout
         parent.addView(text)
 
-        actionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -64,10 +67,18 @@ class BarcodeScannerActivity : Activity(), ZXingScannerView.ResultHandler {
             val item = menu.add(0,
                     TOGGLE_FLASH, 0, "Flash Off")
             item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+            try {
+                val ims = assets.open("baseline_flash_off_white_24.png")
+                item.icon = Drawable.createFromStream(ims, null)
+            } catch (ex: IOException) { }
         } else {
             val item = menu.add(0,
                     TOGGLE_FLASH, 0, "Flash On")
             item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+            try {
+                val ims = assets.open("baseline_flash_on_white_24.png")
+                item.icon = Drawable.createFromStream(ims, null)
+            } catch (ex: IOException) { }
         }
         return super.onCreateOptionsMenu(menu)
     }
@@ -147,7 +158,7 @@ object PermissionUtil {
      * Check that all given permissions have been granted by verifying that each entry in the
      * given array is of the value [PackageManager.PERMISSION_GRANTED].
 
-     * @see Activity.onRequestPermissionsResult
+     * @see AppCompatActivity.onRequestPermissionsResult
      */
     fun verifyPermissions(grantResults: IntArray): Boolean {
         // At least one result must be checked.
