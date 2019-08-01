@@ -48,7 +48,7 @@ class BarcodeScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandl
         parent.addView(scannerView)
 
         val textMargin = 16
-        val textLayout = RelativeLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+        val textLayout = RelativeLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT,
                 RelativeLayout.LayoutParams.WRAP_CONTENT)
         textLayout.setMargins(textMargin, 3 * textMargin, textMargin, 0)
 
