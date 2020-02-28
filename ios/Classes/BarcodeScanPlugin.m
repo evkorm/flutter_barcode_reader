@@ -3,7 +3,7 @@
 
 @implementation BarcodeScanPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-    FlutterMethodChannel *channel = [FlutterMethodChannel methodChannelWithName:@"com.apptreesoftware.barcode_scan"
+    FlutterMethodChannel *channel = [FlutterMethodChannel methodChannelWithName:@"de.mintware.barcode_scan"
                                                                 binaryMessenger:registrar.messenger];
     BarcodeScanPlugin *instance = [BarcodeScanPlugin new];
     instance.hostViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
@@ -23,12 +23,14 @@
 - (void)showBarcodeViewWithText:(NSString*)text useFrontCamera:(BOOL)useFrontCamera {
     BarcodeScannerViewController *scannerViewController = [[BarcodeScannerViewController alloc] init];
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:scannerViewController];
+    if (@available(iOS 13.0, *)) {
+        [navigationController setModalPresentationStyle:UIModalPresentationFullScreen];
+    }
     scannerViewController.delegate = self;
     scannerViewController.text = text;
     scannerViewController.useFrontCamera = useFrontCamera;
     [self.hostViewController presentViewController:navigationController animated:NO completion:nil];
 }
-
 - (void)barcodeScannerViewController:(BarcodeScannerViewController *)controller didScanBarcodeWithResult:(NSString *)result {
     if (self.result) {
         self.result(result);

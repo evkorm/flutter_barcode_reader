@@ -10,23 +10,20 @@
 @implementation BarcodeScannerViewController {
 }
 
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
+{
+    CGRect bounds = [UIScreen mainScreen].bounds;
+    CGRect reversedBounds = CGRectMake(bounds.origin.x, bounds.origin.y, bounds.size.height, bounds.size.width);
+    self.previewView.bounds = reversedBounds;
+    self.previewView.frame = reversedBounds;
+    [self.scanRect stopAnimating];
+    [self.scanRect removeFromSuperview];
+    [self setupScanRect:reversedBounds];
+    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+}
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    self.previewView = [[UIView alloc] initWithFrame:self.view.bounds];
-    self.previewView.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.view addSubview:_previewView];
-    [self.view addConstraints:[NSLayoutConstraint
-                               constraintsWithVisualFormat:@"V:[previewView]"
-                               options:NSLayoutFormatAlignAllBottom
-                               metrics:nil
-                               views:@{@"previewView": _previewView}]];
-    [self.view addConstraints:[NSLayoutConstraint
-                               constraintsWithVisualFormat:@"H:[previewView]"
-                               options:NSLayoutFormatAlignAllBottom
-                               metrics:nil
-                               views:@{@"previewView": _previewView}]];
-    self.scanRect = [[ScannerOverlay alloc] initWithFrame:self.view.bounds];
+- (void)setupScanRect:(CGRect)bounds {
+    self.scanRect = [[ScannerOverlay alloc] initWithFrame:bounds];
     self.scanRect.translatesAutoresizingMaskIntoConstraints = NO;
     self.scanRect.backgroundColor = UIColor.clearColor;
     [self.view addSubview:_scanRect];
@@ -41,7 +38,24 @@
                                metrics:nil
                                views:@{@"scanRect": _scanRect}]];
     [_scanRect startAnimating];
-    
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.previewView = [[UIView alloc] initWithFrame:self.view.bounds];
+    self.previewView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.view addSubview:_previewView];
+    [self.view addConstraints:[NSLayoutConstraint
+            constraintsWithVisualFormat:@"V:[previewView]"
+                                options:NSLayoutFormatAlignAllBottom
+                                metrics:nil
+                                  views:@{@"previewView": _previewView}]];
+    [self.view addConstraints:[NSLayoutConstraint
+            constraintsWithVisualFormat:@"H:[previewView]"
+                                options:NSLayoutFormatAlignAllBottom
+                                metrics:nil
+                                  views:@{@"previewView": _previewView}]];
+    [self setupScanRect:self.view.bounds];
     self.scanner = [[MTBBarcodeScanner alloc] initWithPreviewView:_previewView];
 
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"close"]
@@ -101,6 +115,7 @@
 }
 
 - (void)cancel {
+    [self.delegate barcodeScannerViewController:self didFailWithErrorCode:@"USER_CANCELED"];
     [self dismissViewControllerAnimated:true completion:nil];
 }
 
