@@ -7,7 +7,12 @@
 #import "ScannerOverlay.h"
 
 
+@interface BarcodeScannerViewController()
+  @property(nonatomic, retain) UILabel *textLabel;
+@end
+
 @implementation BarcodeScannerViewController {
+
 }
 
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
@@ -18,7 +23,9 @@
     self.previewView.frame = reversedBounds;
     [self.scanRect stopAnimating];
     [self.scanRect removeFromSuperview];
+    [self.textLabel removeFromSuperview];
     [self setupScanRect:reversedBounds];
+    [self setupText:reversedBounds];
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
 }
 
@@ -40,6 +47,23 @@
     [_scanRect startAnimating];
 }
 
+- (void)setupText:(CGRect)bounds {
+    const float textPadding = 16;
+    CGRect textBounds = CGRectMake(textPadding, textPadding,
+        bounds.size.width-textPadding-textPadding, 0);
+    self.textLabel = [[UILabel alloc] initWithFrame:textBounds];
+    self.textLabel.textColor = [UIColor whiteColor];
+    self.textLabel.lineBreakMode = NSLineBreakByWordWrapping;
+    self.textLabel.numberOfLines = 0;
+    self.textLabel.textAlignment = NSTextAlignmentCenter;
+    self.textLabel.text = self.text;
+    [self.textLabel sizeToFit];
+    self.textLabel.frame = CGRectMake(
+        (bounds.size.width - self.textLabel.frame.size.width) / 2, 16,
+        self.textLabel.frame.size.width, self.textLabel.frame.size.height);
+    [self.view addSubview:self.textLabel];
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.previewView = [[UIView alloc] initWithFrame:self.view.bounds];
@@ -55,7 +79,10 @@
                                 options:NSLayoutFormatAlignAllBottom
                                 metrics:nil
                                   views:@{@"previewView": _previewView}]];
+
     [self setupScanRect:self.view.bounds];
+    [self setupText:self.view.bounds];
+
     self.scanner = [[MTBBarcodeScanner alloc] initWithPreviewView:_previewView];
 
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"close"]
@@ -64,18 +91,6 @@
                                                                             action:@selector(cancel)];
     
     [self updateFlashButton];
-
-    const float textPadding = 16;
-    const float textHeight = 150;
-    CGRect textBounds = CGRectMake(textPadding, textPadding,
-                                   self.view.bounds.size.width-textPadding-textPadding, textHeight);
-    UILabel* textLabel = [[UILabel alloc] initWithFrame:textBounds];
-    textLabel.textColor = [UIColor whiteColor];
-    textLabel.lineBreakMode = NSLineBreakByWordWrapping;
-    textLabel.numberOfLines = 0;
-    textLabel.textAlignment = NSTextAlignmentCenter;
-    textLabel.text = self.text;
-    [self.view addSubview:textLabel];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
