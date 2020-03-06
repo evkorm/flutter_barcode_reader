@@ -26,18 +26,24 @@ class BarcodeScanPlugin(private val registrar: Registrar) : MethodCallHandler, P
     override fun onMethodCall(call: MethodCall, result: Result) {
         if (call.method == "scan") {
             this.result = result
-            showBarcodeView()
+            showBarcodeView(
+                    call.argument("text") ?: "",
+                    call.argument("frontCamera") ?: false
+            )
+
         } else {
             result.notImplemented()
         }
     }
 
-    private fun showBarcodeView() {
+    private fun showBarcodeView(text: String, frontCamera: Boolean) {
         if (registrar.activity() == null) {
             Log.e("BarcodeScanPlugin", "plugin can't launch scan activity, because plugin is not attached to any activity.")
             return
         }
         val intent = Intent(registrar.activity(), BarcodeScannerActivity::class.java)
+        intent.putExtra("text", text)
+        intent.putExtra("frontCamera", frontCamera)
         registrar.activity().startActivityForResult(intent, 100)
     }
 
