@@ -17,15 +17,14 @@
 
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
 {
-    CGRect bounds = [UIScreen mainScreen].bounds;
-    CGRect reversedBounds = CGRectMake(bounds.origin.x, bounds.origin.y, bounds.size.height, bounds.size.width);
-    self.previewView.bounds = reversedBounds;
-    self.previewView.frame = reversedBounds;
+    CGRect bounds = CGRectMake(0, 0, size.width, size.height);
+    self.previewView.bounds = bounds;
+    self.previewView.frame = bounds;
     [self.scanRect stopAnimating];
     [self.scanRect removeFromSuperview];
     [self.textLabel removeFromSuperview];
-    [self setupScanRect:reversedBounds];
-    [self setupText:reversedBounds];
+    [self setupScanRect:bounds];
+    [self setupText:bounds];
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
 }
 
